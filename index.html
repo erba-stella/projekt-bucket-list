@@ -38,8 +38,8 @@
     </header>
     <main>
         <form id="bucketForm">
-            <input type="text" id="activityName" placeholder="Vad vill du göra?" required />
-            <select id="activityCategory">
+            <input type="text" id="activityName" name="activityName" placeholder="Vad vill du göra?" required />
+            <select id="activityCategory" name="activityCategory">
                 <option value="Resor">Resor</option>
                 <option value="Äventyr">Äventyr</option>
                 <option value="Lärande">Lärande</option>
@@ -49,6 +49,7 @@
         </form>
         <section id="bucketLists"></section>
     </main>
+    
     <script src="script.js" defer></script>
 </body>
 

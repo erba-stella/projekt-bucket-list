@@ -1,22 +1,5 @@
 /*
     Course Assignment: "Bucket List"
-
-    Task:
-    - Start with an empty array to store all activities.
-    - Create a function that dynamically renders the list in the DOM.
-    - Add an event listener to the form to add new activities.
-    
-    Level ups:
-    - Sort Activities: Add a feature that sorts activities alphabetically within each category.
-    - Save data: Use localStorage to save and load the list automatically.
-    - Edit Activities: Add the ability to edit activities.
-
-    Result:
-    A functional Bucket List app where the user can:
-    - Add activities with a category.
-    - Mark activities as complete.
-    - Delete activities.
-    - See activities grouped by category.
 */
 
 // Make sure the DOM content is loaded first
@@ -44,11 +27,13 @@ function initBucketList() {
     /*
         Data / Collections
     */
-    // DOM Elements for later use
+    // DOM Elements and attributes for later use
     const bucketFormElem = select('#bucketForm');
     const bucketListsElem = select('#bucketLists');
+    const activityFormElem = select('#activityCategory');
+    const activityNumDataAttr = 'activity-number';
 
-    // Categories (All available categories are listed here)
+    // Categories (All available categories are listed here). 
     const activityCategories = new Set(['Resor', 'Äventyr', 'Lärande', 'Hobby']);
 
     // Bucket List (The place to collect all saved activities)
@@ -59,15 +44,17 @@ function initBucketList() {
     /*
         on page load
     */
-    // Render all bucket list content
+    // Render all bucket list content to the document
     renderBucketList(activityCategories, bucketList);
+    // Render category options in the form  
+    renderActivityCategoryOptions(activityCategories);
     /*
         add eventListeners
     */
     /*
         Form submit event (the user added a new activity) 
         - Collect the form data in a new activity object: { activityName: value, activityCategory: value }
-        - Add a new activity with the activity object as an argument
+        - Use the new activity object to add a new activity
     */
     bucketFormElem.addEventListener('submit', event => {
         event.preventDefault();
@@ -82,7 +69,7 @@ function initBucketList() {
     bucketListsElem.addEventListener("click", event => {
         if (event.target.type === 'checkbox') {
             // change the activity object in the bucket list array (set completed to true if checked)
-            changeItemInBucketList(event, (item) => {
+            findActivityInBucketList(event, (item) => {
                 item.completed = event.target.checked;
             })
             // save changes to local storage
@@ -97,9 +84,9 @@ function initBucketList() {
     });
 
     // Find and change the object in the bucket list array that coresponds with the event target... 
-    function changeItemInBucketList(event, callback) {
-        const elem = event.target.closest('[data-activity-number]');
-        const num = Number(elem.getAttribute('data-activity-number'));
+    function findActivityInBucketList(event, callback) {
+        const elem = event.target.closest(`[data-${activityNumDataAttr}]`);
+        const num = Number(elem.getAttribute(`data-${activityNumDataAttr}`));
         bucketList.forEach((obj, index) => {
             if (num === obj.activityNumber) {
                 callback(obj, index);
@@ -118,38 +105,72 @@ function initBucketList() {
         ++numActivitiesCreated;
         obj.activityNumber = numActivitiesCreated;
 
-        // create activity element and add to the category list in the document
-        const newActivityElem = getActivityHTML(obj);
-        select(`[data-category=${obj.activityCategory}]`).prepend(newActivityElem);
+        // Add the activity to the document, 
+        // first check if the category list already exists there
+        const categoryElemInUI = select(`[data-category=${obj.activityCategory}]`) || false;
+
+        if (categoryElemInUI) {
+            // If true: create activity element and add to the category list
+            categoryElemInUI.prepend(getActivityHTML(obj));
+        } else {
+            // If false: create all HTML for the category and add it to the bucket lists
+            const newCategoryElem = getCategoryHTML(obj.activityCategory, [obj]);
+            bucketListsElem.prepend(newCategoryElem);
+        }
 
         // add activity to the bucket list
         bucketList.push(obj);
         // save changes to local storage
         saveToStorage('bucketList', bucketList);
-        saveToStorage(numActivitiesCreated);
+        saveToStorage('numActivitiesCreated', numActivitiesCreated);
     }
     /*
         Function: remove activity
         - Remove the activity element that corresponds to the event target
     */
     function removeTargetActivity(event) {
-        // Remove from document
-        event.target.closest('[data-activity-number]').remove();
-        // Remove from bucket list
-        changeItemInBucketList(event, (item, index) => {
+        // If the category element has only one activity, remove the category element
+        if (event.target.closest('ul').children.length === 1) {
+            event.target.closest('.category-section').remove();
+        } else {
+            // If else: Remove the activity element
+            event.target.closest(`[data-${activityNumDataAttr}]`).remove();
+        }
+        // Remove activity from bucket list
+        findActivityInBucketList(event, (item, index) => {
             bucketList.splice(index, 1);
         })
     }
 
+    /*
+        Render functions
+    */
+
+    // Render all form category options and append them to the form in the document
+    function renderActivityCategoryOptions(setOfCategories) {
+        const elements = createHTMLcollection();
+        setOfCategories.forEach(category => {
+            elements.addChild('option', {
+                textContent: category,
+                value: category
+            });
+        });
+        activityFormElem.appendChild(elements.returnHTML());
+    }
+
     // Render all Bucket List content and append it to the document
     function renderBucketList(setOfCategories, arrayOfActivities) {
-
         setOfCategories.forEach(category => {
+            // Filter out all activities that belong to the current category
             const activitiesForThisCategory = arrayOfActivities.filter(obj => {
                 return obj.activityCategory === category;
-            });            
-            const categoryElem = getCategoryHTML(category, activitiesForThisCategory);            
-            bucketListsElem.appendChild(categoryElem);
+            }); 
+            // Render the category if there are activities for it
+            if (activitiesForThisCategory.length > 0) {
+                // Create the category element and append it to the bucket list
+                const categoryElem = getCategoryHTML(category, activitiesForThisCategory);
+                bucketListsElem.appendChild(categoryElem);
+            };  
         });
     }
 
@@ -159,7 +180,7 @@ function initBucketList() {
             elements = createHTMLcollection();
         
         return elements
-            .addParent('section', { classList: `${category.toLowerCase()}` })
+            .addParent('section', { classList: `category-section ${category.toLowerCase()}` })
             .addChild('h2', { textContent: category })
             .addChild('ul', { dataAttr: ['category', category] })
             .setParent('ul')
@@ -183,18 +204,20 @@ function initBucketList() {
         const
             number = activityObj.activityNumber,
             name = activityObj.activityName,
+            isCompleted = activityObj.completed,
             elements = createHTMLcollection();
 
         return elements
             .addParent('li', {
-                dataAttr: ['activity-number', number]
+                dataAttr: [activityNumDataAttr, number]
             })
             .addChild('p', {
                 textContent: name
             })
             .addChild('input', {
                 type: 'checkbox',
-                id: `completed-${number}`
+                id: `completed-${number}`,
+                checked: isCompleted
             })
             .addChild('label', {
                 classList: 'visually-hidden',
@@ -202,7 +225,7 @@ function initBucketList() {
                 htmlFor: `completed-${number}`
             })
             .addChild('button', {
-                textContent: '✖️',
+                textContent: 'radera',
             })
             .setParent('button')
             .addChild('span', {
@@ -226,7 +249,6 @@ function initBucketList() {
                 return elem;
             },
             selectElem(selector, parent = this.fragment || false) {
-                if (!parent) console.error('missing parent', this);
                 return parent.querySelector(selector);
             },
             addParent(tagStr, attrObj) {

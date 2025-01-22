@@ -1,0 +1,199 @@
+/* Special Elite */
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+
+/* reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font: inherit;
+}
+
+body {
+    min-height: 100vh;
+}
+
+:root {
+    --button-color: rgb(80, 46, 68);
+    --button-color: rgb(43, 34, 40);
+    --base-gap: 1.5rem;
+    --base-gap-sm: calc(var(--base-gap) / 2);
+    --border-radius: 0.5rem;
+    --border-radius-btn: 10rem;
+}
+
+
+/* base styling */
+
+
+body {
+    font-family: Helvetica, 'Gill Sans', Tahoma, sans-serif;
+    font-weight: 400;
+    background-color: rgb(231, 235, 235);
+}
+
+h1,
+h2 {
+    font-family: "Special Elite", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+h1 {
+    font-size: 2.7rem;
+    word-spacing: -0.15em;
+    letter-spacing: -0.01em;
+    color: rgb(25, 22, 23);
+}
+
+h2 {
+    font-size: 1.6rem;
+    color: rgb(62, 65, 67);
+}
+
+/* Layout global */
+
+main,
+header {
+    display: grid;
+    gap: var(--base-gap);
+    padding: var(--base-gap);
+    place-content: center;
+}
+
+main {
+    width: clamp(min(360px, 100vw), 85%, 125ch);
+    margin-inline: auto;
+}
+
+form {
+    width: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    place-self: center;
+    padding: var(--base-gap-sm) var(--base-gap);
+    gap: var(--base-gap-sm);
+    background-color: rgb(252, 252, 252);
+    border-radius: var(--border-radius);
+
+    &>* {
+        border-radius: var(--border-radius);
+        padding: .5rem 1rem;
+        color: rgb(80, 46, 68);
+        border: rgb(80, 46, 68) solid 0.12em;
+    }
+
+    button {
+        background-color: var(--button-color, rgb(9, 9, 9));
+        min-width: max-content;
+        color: white;
+        border: none;
+        width: 7em;
+    }
+}
+
+
+/* Card-container with flexbox */
+.lists-container {
+    --min: 25ch;
+    --gap: var(--base-gap, 1rem);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap, 1rem);
+}
+
+.category-section {
+    flex: 1 1 var(--min);
+    transition: all 0.4s;
+}
+
+.category-section :is(h2, ul) {
+    padding-inline: var(--base-gap);
+}
+
+.category-section h2 {
+    padding-block: var(--base-gap-sm);
+}
+
+/* .category-section:not(:has(li)) {
+    position: absolute;
+    transform: scaleY(0);
+    opacity: 0;
+    margin: 0;
+    padding: 0;
+    contain: paint;
+} */
+
+
+ul {
+    list-style-type: none;
+    display: grid;
+    border-radius: var(--border-radius);
+    background-color: rgb(176, 255, 255);
+}
+
+
+li {
+    /* position: relative; */
+    display: flex;
+    align-items: center;
+    gap: var(--base-gap-sm);
+    padding-block: var(--base-gap-sm);
+
+    [type="checkbox"] {
+        order: -1;
+        accent-color: rgb(215, 199, 198);
+    }
+
+    p {
+        width: fit-content;
+    }
+
+    &:not(:last-child) {
+        border-bottom: 0.2em solid rgb(231, 235, 235);
+    }
+
+
+    button {
+        margin-left: auto;
+        display: flex;
+        width: fit-content;
+        height: 1rem;
+        line-height: 1rem;
+        font-size: 8px;
+        border-radius: var(--border-radius-btn, 10rem);
+        border: none;
+        padding-block: 0;
+        padding-inline: .7em;
+        color: white;
+        background-color: var(--button-color, rgb(9, 9, 9));
+    }
+}
+
+.break-conditionally {
+    display: none;
+}
+
+.visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+/* body {
+    background-color:lavenderblush;
+}
+
+* {
+    outline: 1px solid tomato;
+} */

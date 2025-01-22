@@ -5,49 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bucket List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        #bucketLists div {
-            margin-bottom: 20px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px 0;
-        }
-
-        button {
-            margin-left: 10px;
-        }
-    </style>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=delete_forever" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
     <header>
-        <h1>Min Bucket List</h1>
+        <h1>Min <br class="break-conditionally">Bucket List</h1>
     </header>
     <main>
         <form id="bucketForm">
             <input type="text" id="activityName" name="activityName" placeholder="Vad vill du göra?" required />
             <select id="activityCategory" name="activityCategory">
-                <option value="Resor">Resor</option>
-                <option value="Äventyr">Äventyr</option>
-                <option value="Lärande">Lärande</option>
-                <option value="Hobby">Hobby</option>
             </select>
             <button type="submit">Lägg till</button>
         </form>
-        <section id="bucketLists"></section>
+        <section id="bucketLists" class="lists-container"></section>
     </main>
     
     <script src="script.js" defer></script>
